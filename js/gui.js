@@ -126,12 +126,102 @@ function createScenes() {
             y: m.height * 9 / 10
         })
         var a = [];
-        while(unsuccessful < 20) {
+        /*while(unsuccessful < 20) {
             var x1 = rand(0, 10);
             var y1 = rand(0, 10);
             var x2 = x1 + rand(true), y2 = y1 + rand(true);
 
-        }
+        }*/
+    });
+    canvas.scenes.create("level1", function() {
+        components.level1 = {};
+        components.level1.tree = QUAD.init({
+            x: 0,
+            y: 0,
+            w: 3600,
+            h: 400
+        });
+        components.level1.floobow = canvas.display.rectangle({
+            x: w / 2,
+            y: h / 2,
+            width: 20,
+            height: 20,
+            fill: 'red',
+            stroke: '2px black',
+            dx: 0,
+            dy: 0,
+            mja: false,
+            onGround: true,
+            stats: {coins: 0},
+            update: function() {
+                var k = canvas.keyboard.getKeysDown();
+                if(this.onGround == true) {
+                    if(k.indexOf(32) != -1) {
+                        if(this.mja == true) {
+                            this.dy = -5;
+                            this.mja = false;
+                            this.onGround = false;
+                        }
+                    } else {
+                        this.mja = true;
+                    }
+                }
+                else {
+                    this.dy += 0.25;
+                }
+                if(k.indexOf(65) != -1) {
+                    this.dx = -3;
+                }
+                else if(k.indexOf(68) != -1) {
+                    this.dx = 3;
+                }
+                else {
+                    this.dx = 0;
+                }
+                if(this.dy > 5) this.dy = 5;
+                this.x += this.dx;
+                this.y += this.dy;
+                var g = components.level1.tree.select({x: this.x, y: this.y, w: this.width, h: this.height}, false);
+                if(g.length > 0) {
+                    this.y = g[0].y - this.height;
+                    this.dy = 0;
+                    this.onGround = true;
+                } else {
+                    this.onGround = false;
+                }
+            }
+        });
+        this.add(components.level1.floobow);
+        components.level1.stats = canvas.display.text({
+            x: 10,
+            y: 10,
+            text: "Coins: " + components.level1.floobow.stats.coins,
+            font: "20px monospace",
+            fill: "black"
+        });
+        this.add(components.level1.stats);
+        addToBoth(canvas.display.rectangle({
+            x: w / 2 - 80,
+            y: h / 2 + 20,
+            width: 100,
+            height: h,
+            fill: "rgb(230, 230, 230)"
+        }), this, components.level1.tree);
+        addToBoth(canvas.display.rectangle({
+            x: w / 2 + 50,
+            y: h / 2 + 50,
+            width: 100,
+            height: h,
+            fill: "rgb(230, 230, 230)"
+        }), this, components.level1.tree);
+        addToBoth(canvas.display.ellipse({
+            x: w / 2 + 50,
+            y: h / 2 + 30,
+            radius: 10,
+            fill: "gold",
+            width: 20,
+            height: 20
+        }), this, components.level1.tree);
     });
 }
 
@@ -184,5 +274,20 @@ function createTitle(_text, _x, _y, options) {
         font : options.font,
         origin : options.origin,
         fill : options.fill
+    });
+}
+
+function addToBoth(obj, scene, tree) {
+    var i;
+    console.log(scene);
+    if(scene.hasOwnProperty("children")) {scene.addChild(obj); i = scene.children.length - 1;}
+    else {scene.add(obj); i = scene.objects.length - 1;}
+    tree.insert({
+        x: obj.abs_x,
+        y: obj.abs_y,
+        w: obj.width,
+        h: obj.height,
+        model: obj,
+        index: i
     });
 }
