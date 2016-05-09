@@ -21,7 +21,7 @@ function init() {
         h: 400
     });
     createScenes();
-    canvas.scenes.load("motiontest", true);
+    canvas.scenes.load("level1", true);
     canvas.setLoop(update);
     canvas.timeline.start();
 }
@@ -29,6 +29,9 @@ function init() {
 function update(ctx) {
     if(canvas.scenes.current == "/edit") {
         var now = new Date();
+    }
+    if(canvas.scenes.current == "level1") {
+        components.level1.floobow.update();
     }
 }
 
