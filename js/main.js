@@ -1,5 +1,6 @@
 var canvas;
 var tree;
+var keyBind;
 
 oCanvas.domReady(function() {
     canvas = oCanvas.create({
@@ -20,6 +21,7 @@ function init() {
         w: 600,
         h: 400
     });
+    keyBind = {left:[65,37], right:[68,39], jump:[32,38]};
     createScenes();
     canvas.scenes.load("level1", true);
     canvas.setLoop(update);
