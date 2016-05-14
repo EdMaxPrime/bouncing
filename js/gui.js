@@ -156,7 +156,7 @@ function createScenes() {
             update: function() {
                 var k = canvas.keyboard.getKeysDown();
                 if(this.onGround == true) {
-                    if(k.indexOf(32) != -1) {
+                    if(findFirst(k, keyBind.jump)) {
                         if(this.mja == true) {
                             this.dy = -5;
                             this.mja = false;
@@ -169,10 +169,10 @@ function createScenes() {
                 else {
                     this.dy += 0.25;
                 }
-                if(k.indexOf(65) != -1) {
+                if(findFirst(k, keyBind.left) != -1) {
                     this.dx = -3;
                 }
-                else if(k.indexOf(68) != -1) {
+                else if(findFirst(k, keyBind.right) != -1) {
                     this.dx = 3;
                 }
                 else {
@@ -183,15 +183,22 @@ function createScenes() {
                 this.y += this.dy;
                 var g = components.level1.tree.select({x: this.x, y: this.y, w: this.width, h: this.height}, false);
                 if(g.length > 0) {
-                    this.y = g[0].y - this.height;
-                    this.dy = 0;
-                    this.onGround = true;
+                    if(g[0].model.hasOwnProperty('material') == false) {
+                        this.y = g[0].y - this.height;
+                        this.dy = 0;
+                        this.onGround = true;
+                    }
+                    else if(g[0].model.material == "coin") {
+                        this.stats.coins++;
+                        g[0].model.opacity = 0;
+                    }
                 } else {
                     this.onGround = false;
                 }
             }
         });
         this.add(components.level1.floobow);
+        //TEXT
         components.level1.stats = canvas.display.text({
             x: 10,
             y: 10,
@@ -214,13 +221,15 @@ function createScenes() {
             height: h,
             fill: "rgb(230, 230, 230)"
         }), this, components.level1.tree);
+        //COIN
         addToBoth(canvas.display.ellipse({
             x: w / 2 + 50,
             y: h / 2 + 30,
             radius: 10,
             fill: "gold",
             width: 20,
-            height: 20
+            height: 20,
+            material: 'coin'
         }), this, components.level1.tree);
     });
 }
