@@ -92,7 +92,7 @@ QUAD.init = function (args) {
                 if(nodes.length) {
                     //call retrueve2 on all matching subnodes
                     this.findOverlappingNodes(selector, function(dir) {
-                        nodes[dir].retrieve2(selector, callback, instance);
+                        a = a.concat(nodes[dir].retrieve2(selector, callback, instance));
                     });
                 }
                 return a;
