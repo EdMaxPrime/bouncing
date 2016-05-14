@@ -63,6 +63,16 @@ function subArray(array, start, end) {
     return r;
 }
 
+function findFirst(haystack, needle) {
+    var lowest = -1;
+    var n;
+    for(var i = 0; i < needle.length; i++) {
+        n = haystack.indexOf(needle[i])
+        if(n < lowest && n != -1) lowest = n;
+    }
+    return lowest;
+}
+
 //https://developer.mozilla.org/en-US/docs/Web/JavaScript/Reference/Global_Objects/parseInt
 function filterInt(value) {
   if(/^(\-|\+)?([0-9]+|Infinity)$/.test(value))
