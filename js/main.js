@@ -21,7 +21,7 @@ function init() {
         w: 600,
         h: 400
     });
-    keyBind = {left:[65,37], right:[68,39], jump:[32,38]};
+    keyBind = {left:[65,37], right:[68,39], jump:[87,38]};
     createScenes();
     canvas.scenes.load("level1", true);
     canvas.setLoop(update);
@@ -34,6 +34,7 @@ function update(ctx) {
     }
     if(canvas.scenes.current == "level1") {
         components.level1.floobow.update();
+        components.level1.stats.update();
     }
 }
 
@@ -64,13 +65,13 @@ function subArray(array, start, end) {
 }
 
 function findFirst(haystack, needle) {
-    var lowest = -1;
+    var lowest = haystack.length;
     var n;
     for(var i = 0; i < needle.length; i++) {
-        n = haystack.indexOf(needle[i])
+        n = haystack.indexOf(needle[i]);
         if(n < lowest && n != -1) lowest = n;
     }
-    return lowest;
+    return (lowest == haystack.length)? -1 : lowest;
 }
 
 //https://developer.mozilla.org/en-US/docs/Web/JavaScript/Reference/Global_Objects/parseInt
