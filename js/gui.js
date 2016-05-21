@@ -142,7 +142,7 @@ function createScenes() {
             h: 400
         });
         components.level1.floobow = canvas.display.rectangle({
-            x: w / 2,
+            x: w / 2 - 130,
             y: h / 2,
             width: 20,
             height: 20,
@@ -151,7 +151,7 @@ function createScenes() {
             dx: 0,
             dy: 0,
             mja: false,
-            onGround: true,
+            onGround: false,
             stats: {coins: 0},
             update: function() {
                 var k = canvas.keyboard.getKeysDown();
@@ -206,12 +206,12 @@ function createScenes() {
             font: "20px monospace",
             fill: "black",
             update: function() {
-                this.text = "Coins: " + components.level1.floobow.stats.coins + " Mja: " + components.level1.floobow.mja + " og: " + components.level1.floobow.onGround;
+                this.text = "Coins: " + components.level1.floobow.stats.coins + " mouse: " + canvas.mouse.x + ", " + canvas.mouse.y;
             }
         });
         this.add(components.level1.stats);
         addToBoth(canvas.display.rectangle({
-            x: w / 2 - 80,
+            x: w / 2 - 140,
             y: h / 2 + 20,
             width: 100,
             height: h,
@@ -234,6 +234,26 @@ function createScenes() {
             height: 20,
             material: 'coin'
         }), this, components.level1.tree);
+        addToBoth(canvas.display.ellipse({
+            x: 290,
+            y: 183,
+            radius: 10,
+            fill: "gold",
+            width: 20,
+            height: 20,
+            material: 'coin'
+        }), this, components.level1.tree);
+        addToBoth(canvas.display.ellipse({
+            x: 230,
+            y: 196,
+            radius: 10,
+            fill: "gold",
+            width: 20,
+            height: 20,
+            material: 'coin'
+        }), this, components.level1.tree);
+        //WORDS
+        addToBoth(createWord('Fox', 310, 100), this, components.level1.tree);
     });
 }
 
@@ -290,20 +310,61 @@ function createTitle(_text, _x, _y, options) {
 }
 
 function addToBoth(obj, scene, tree) {
-    var i;
-    console.log(scene);
-    if(scene.hasOwnProperty("children")) {scene.addChild(obj); i = scene.children.length - 1;}
-    else {scene.add(obj); i = scene.objects.length - 1;}
-    tree.insert({
-        x: obj.abs_x,
-        y: obj.abs_y,
-        w: obj.width,
-        h: obj.height,
-        model: obj,
-        index: i
-    });
+    if(Array.isArray(obj) == true) {
+        for(var j = 0; j < obj.length; j++) {
+            addToBoth(obj[j], scene, tree);
+        }
+    } else {
+        var i;
+        console.log(scene);
+        if(scene.hasOwnProperty("children")) {scene.addChild(obj); i = scene.children.length - 1;}
+        else {scene.add(obj); i = scene.objects.length - 1;}
+        tree.insert({
+            x: obj.abs_x,
+            y: obj.abs_y,
+            w: obj.width,
+            h: obj.height,
+            model: obj,
+            index: i
+        });
+    }
 }
 function eatCoin(coin) {
     coin.model.material = "spent";
     coin.model.opacity = 0;
+}
+function createLetter(abc, _x, _y) {
+    var l = canvas.display.rectangle({
+        x: _x,
+        y: _y,
+        fill: 'rgb(0,0,0)',
+        width: 18,
+        height: 30,
+        material: "letter",
+        origin: {x:"left",y:"top"}
+    });
+    l.addChild(canvas.display.text({
+        x: 9,
+        y: 15,
+        fill: 'white',
+        text: abc,
+        font: "24px monospace",
+        origin: {x:"center", y:"center"}
+    }));
+    return l;
+}
+function createWord(word, _x, _y, apart) {
+    w = [];
+    apart = apart || 18;
+    if(apart > 0) {
+        for(var i = 0; i < word.length; i++) {
+            w.push(createLetter(word.charAt(i), _x + (i * apart), _y));
+        }
+    }
+    else {
+        for(var i = 0; i < word.length; i++) {
+            w.push(createLetter(word.charAt(i), _x, _y + (i * apart)));
+        }
+    }
+    return w;
 }
