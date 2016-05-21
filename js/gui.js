@@ -156,8 +156,8 @@ function createScenes() {
             update: function() {
                 var k = canvas.keyboard.getKeysDown();
                 if(this.onGround == true) {
-                    if(findFirst(k, keyBind.jump)) {
-                        if(this.mja == true) {
+                    if(findFirst(k, keyBind.jump) != -1) {
+                        if(this.mja == true) { //may jump again
                             this.dy = -5;
                             this.mja = false;
                             this.onGround = false;
@@ -190,7 +190,7 @@ function createScenes() {
                     }
                     else if(g[0].model.material == "coin") {
                         this.stats.coins++;
-                        g[0].model.opacity = 0;
+                        eatCoin(g[0]);
                     }
                 } else {
                     this.onGround = false;
@@ -204,7 +204,10 @@ function createScenes() {
             y: 10,
             text: "Coins: " + components.level1.floobow.stats.coins,
             font: "20px monospace",
-            fill: "black"
+            fill: "black",
+            update: function() {
+                this.text = "Coins: " + components.level1.floobow.stats.coins + " Mja: " + components.level1.floobow.mja + " og: " + components.level1.floobow.onGround;
+            }
         });
         this.add(components.level1.stats);
         addToBoth(canvas.display.rectangle({
@@ -299,4 +302,8 @@ function addToBoth(obj, scene, tree) {
         model: obj,
         index: i
     });
+}
+function eatCoin(coin) {
+    coin.model.material = "spent";
+    coin.model.opacity = 0;
 }
